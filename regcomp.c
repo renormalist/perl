@@ -4784,7 +4784,7 @@ Perl_re_compile(pTHX_ SV * const pattern, U32 orig_pm_flags)
     struct regexp *r;
     register regexp_internal *ri;
     STRLEN plen;
-    char* VOL exp;
+    char  *exp;
     char* xend;
     regnode *scan;
     I32 flags;
