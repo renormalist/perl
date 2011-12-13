@@ -4738,18 +4738,11 @@ Perl_reginitcolors(pTHX)
  * scope
  */
 
-#ifndef PERL_IN_XSUB_RE
-#define RE_ENGINE_PTR &PL_core_reg_engine
-#else
-extern const struct regexp_engine my_reg_engine;
-#define RE_ENGINE_PTR &my_reg_engine
-#endif
-
 #ifndef PERL_IN_XSUB_RE 
 
-/* return the currently in-scope regex engine (or NULL if none)  */
+/* return the currently in-scope regex engine (or the default if none)  */
 
-regexp_engine *
+regexp_engine const *
 Perl_current_re_engine(pTHX)
 {
     dVAR;
@@ -4759,19 +4752,19 @@ Perl_current_re_engine(pTHX)
 	SV **ptr;
 
 	if (!table)
-	    return NULL;
+	    return &PL_core_reg_engine;
 	ptr = hv_fetchs(table, "regcomp", FALSE);
 	if ( !(ptr && SvIOK(*ptr) && SvIV(*ptr)))
-	    return NULL;
+	    return &PL_core_reg_engine;
 	return INT2PTR(regexp_engine*,SvIV(*ptr));
     }
     else {
 	SV *ptr;
 	if (!PL_curcop->cop_hints_hash)
-	    return NULL;
+	    return &PL_core_reg_engine;
 	ptr = cop_hints_fetch_pvs(PL_curcop, "regcomp", 0);
 	if ( !(ptr && SvIOK(ptr) && SvIV(ptr)))
-	    return NULL;
+	    return &PL_core_reg_engine;
 	return INT2PTR(regexp_engine*,SvIV(ptr));
     }
 }
@@ -4781,20 +4774,17 @@ REGEXP *
 Perl_pregcomp(pTHX_ SV * const pattern, const U32 flags)
 {
     dVAR;
-    regexp_engine *eng = current_re_engine();
+    regexp_engine const *eng = current_re_engine();
+    GET_RE_DEBUG_FLAGS_DECL;
 
     PERL_ARGS_ASSERT_PREGCOMP;
 
     /* Dispatch a request to compile a regexp to correct regexp engine. */
-    if (eng) {
-        GET_RE_DEBUG_FLAGS_DECL;
-	DEBUG_COMPILE_r({
-	    PerlIO_printf(Perl_debug_log, "Using engine %"UVxf"\n",
-			    PTR2UV(eng));
-	});
-	return CALLREGCOMP_ENG(eng, pattern, flags);
-    }
-    return Perl_re_compile(aTHX_ pattern, flags);
+    DEBUG_COMPILE_r({
+	PerlIO_printf(Perl_debug_log, "Using engine %"UVxf"\n",
+			PTR2UV(eng));
+    });
+    return CALLREGCOMP_ENG(eng, pattern, flags);
 }
 #endif
 
@@ -4806,8 +4796,8 @@ Perl_re_compile(pTHX_ SV * const pattern, U32 rx_flags)
 {
     SV *pat = pattern; /* defeat constness! */
     PERL_ARGS_ASSERT_RE_COMPILE;
-    return Perl_re_op_compile(aTHX_ &pat, 1, NULL,
-				    NULL, NULL, NULL, rx_flags, 0);
+    return Perl_re_op_compile(aTHX_ &pat, 1, NULL, current_re_engine(),
+				NULL, NULL, rx_flags, 0);
 }
 
 
@@ -4827,8 +4817,9 @@ Perl_re_compile(pTHX_ SV * const pattern, U32 rx_flags)
  * If the pattern hasn't changed from old_re, then old_re will be
  * returned.
  *
- * If eng is set (and not equal to PL_core_reg_engine), then just do the
- * initial concatenation of arguments, then pass on to the external
+ * eng is the current engine. If that engine has an op_comp method, then
+ * handle directly (i.e. we assume that op_comp was us); otherwise, just
+ * do the initial concatenation of arguments and pass on to the external
  * engine.
  *
  * If is_bare_re is not null, set it to a boolean indicating whether the
@@ -4890,6 +4881,8 @@ Perl_re_op_compile(pTHX_ SV ** const patternp, int pat_count,
     RExC_state_t copyRExC_state;
 #endif    
     GET_RE_DEBUG_FLAGS_DECL;
+
+    PERL_ARGS_ASSERT_RE_OP_COMPILE;
 
     DEBUG_r(if (!PL_colorset) reginitcolors());
 
@@ -5048,7 +5041,7 @@ Perl_re_op_compile(pTHX_ SV ** const patternp, int pat_count,
 		if (SvROK(rx))
 		    rx = SvRV(rx);
 		if (SvTYPE(rx) == SVt_REGEXP
-		    && RX_ENGINE((REGEXP*)rx) == RE_ENGINE_PTR)
+		    && RX_ENGINE((REGEXP*)rx)->op_comp)
 		{
 
 		    RXi_GET_DECL(((struct regexp*)SvANY(rx)), ri);
@@ -5156,7 +5149,7 @@ Perl_re_op_compile(pTHX_ SV ** const patternp, int pat_count,
 
     exp = SvPV_nomg(pat, plen);
 
-    if (eng && eng != RE_ENGINE_PTR) {
+    if (!eng->op_comp) {
 	if ((SvUTF8(pat) && IN_BYTES)
 		|| SvGMAGICAL(pat) || SvAMAGIC(pat))
 	{
@@ -5382,7 +5375,7 @@ Perl_re_op_compile(pTHX_ SV ** const patternp, int pat_count,
 
     /* non-zero initialization begins here */
     RXi_SET( r, ri );
-    r->engine= RE_ENGINE_PTR;
+    r->engine= eng;
     r->extflags = rx_flags;
     if (pm_flags & PMf_IS_QR) {
 	ri->code_blocks = pRExC_state->code_blocks;
@@ -6011,8 +6004,6 @@ reStudy:
 #endif
     return rx;
 }
-
-#undef RE_ENGINE_PTR
 
 
 SV*
