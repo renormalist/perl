@@ -2,6 +2,10 @@
 
 /* The PerlApp application is licensed under the same terms as Perl itself. */
 
+/*
+ * Modifications Copyright 2007 by Jarkko Hietaniemi
+ */
+
 #ifndef __PerlApp_h__
 #define __PerlApp_h__
 

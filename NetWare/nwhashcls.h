@@ -1,6 +1,6 @@
 
 /*
- * Copyright © 2001 Novell, Inc. All Rights Reserved.
+ * Copyright © 2001, 2002 Novell, Inc. All Rights Reserved.
  *
  * You may distribute under the terms of either the GNU General Public
  * License or the Artistic License, as specified in the README file.

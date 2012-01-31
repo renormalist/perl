@@ -4,6 +4,8 @@
  * You may distribute under the terms of either the GNU General Public
  * License or the Artistic License, as specified in the README file.
  *
+ * Modifications Copyright 2005, 2007, 2008 by Steve Hay and others
+ *
  */
 
 /*

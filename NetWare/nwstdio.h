@@ -4,6 +4,8 @@
  * You may distribute under the terms of either the GNU General Public
  * License or the Artistic License, as specified in the README file.
  *
+ * Modifications Copyright 2007 by Steve Peters
+ *
  */
 
 /*

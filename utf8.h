@@ -1,7 +1,7 @@
 /*    utf8.h
  *
  *    Copyright (C) 2000, 2001, 2002, 2005, 2006, 2007, 2009,
- *    2010, 2011 by Larry Wall and others
+ *    2010, 2011, 2012 by Larry Wall and others
  *
  *    You may distribute under the terms of either the GNU General Public
  *    License or the Artistic License, as specified in the README file.

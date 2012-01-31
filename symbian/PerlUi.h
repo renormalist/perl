@@ -2,6 +2,10 @@
 
 /* The PerlUi class is licensed under the same terms as Perl itself. */
 
+/*
+ * Modifications Copyright 2007 by Jarkko Hietaniemi
+ */
+
 #ifndef __PerlUi_h__
 #define __PerlUi_h__
 

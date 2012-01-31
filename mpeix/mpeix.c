@@ -1,3 +1,6 @@
+/*
+ * Modifications Copyright 2003, 2006 by Jarkko Hietaniemi and others
+ */
 
 /*
  * gcc long pointer support code for HPPA.

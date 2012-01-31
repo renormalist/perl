@@ -342,7 +342,7 @@ Increase verbosity level. Can be given multiple times.
 
 =head1 COPYRIGHT
 
-Copyright 2003 by Marcus Holland-Moritz <mhx@cpan.org>.
+Copyright 2003, 2011 by Marcus Holland-Moritz <mhx@cpan.org> and others.
 
 This program is free software; you may redistribute it
 and/or modify it under the same terms as Perl itself.

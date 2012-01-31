@@ -2,6 +2,10 @@
 
 /* The CPerlBase class is licensed under the same terms as Perl itself. */
 
+/*
+ * Modifications Copyright 2009 by Adam Russell
+ */
+
 /* See PerlBase.pod for documentation. */
 
 #ifndef __PerlBase_h__

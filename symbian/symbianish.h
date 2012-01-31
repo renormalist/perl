@@ -4,6 +4,8 @@
  *	Copyright (c) Nokia 2004-2005.  All rights reserved.
  *      This code is licensed under the same terms as Perl itself.
  *
+ *      Modifications Copyright 2006, 2007 by Nicholas Clark and others
+ *
  */
 
 #include "symbian/symbian_port.h"

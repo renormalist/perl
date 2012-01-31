@@ -1,5 +1,6 @@
 /*
- *    Copyright (c) 1999 Olaf Flebbe o.flebbe@gmx.de
+ *    Copyright (c) 1999, 2000, 2001, 2002, 2008 Olaf Flebbe o.flebbe@gmx.de
+ *    and others
  *    
  *    You may distribute under the terms of either the GNU General Public
  *    License or the Artistic License, as specified in the README file.

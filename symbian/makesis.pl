@@ -2,6 +2,8 @@
 
 # Copyright (c) 2004-2005 Nokia.  All rights reserved.
 
+# Modifications Copyright 2007, 2009 by Jarkko Hietaniemi and others
+
 use strict;
 use lib "symbian";
 

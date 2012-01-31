@@ -228,7 +228,7 @@ while (<DATA>) { # Read in the protypes.
 	print U <<"EOF";
 ?RCS: \$Id: d_${func}_r.U,v $
 ?RCS:
-?RCS: Copyright (c) 2002,2003 Jarkko Hietaniemi
+?RCS: Copyright (c) 2002,2003, 2011 Jarkko Hietaniemi and others
 ?RCS:
 ?RCS: You may distribute under the terms of either the GNU General Public
 ?RCS: License or the Artistic License, as specified in the README file.

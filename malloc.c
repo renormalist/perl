@@ -230,7 +230,8 @@
  * This is designed for use in a program that uses vast quantities of memory,
  * but bombs when it runs out.
  * 
- * Modifications Copyright Ilya Zakharevich 1996-99.
+ * Modifications Copyright 1996-99, 2000, 2001, 2002, 2003, 2004,
+ *  2005, 2006, 2007, 2008, 2009, 2011, 2012 by Ilya Zakharevich and others
  * 
  * Still very quick, but much more thrifty.  (Std config is 10% slower
  * than it was, and takes 67% of old heap size for typical usage.)
