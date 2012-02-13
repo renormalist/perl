@@ -1380,7 +1380,7 @@ is the recommended Unicode-aware way of saying
 
 #define TRIE_READ_CHAR STMT_START {                                           \
     wordlen++;                                                                \
-    if ( UTF ) {                                                              \
+    if ( UTF || flags == EXACTFU ) {                                          \
 	if ( folder ) {                                                       \
 	    if ( foldlen > 0 ) {                                              \
 	       uvc = utf8n_to_uvuni( scan, UTF8_MAXLEN, &len, uniflags );     \
@@ -1388,8 +1388,13 @@ is the recommended Unicode-aware way of saying
 	       scan += len;                                                   \
 	       len = 0;                                                       \
 	    } else {                                                          \
-		len = UTF8SKIP(uc);\
-		uvc = to_utf8_fold( uc, foldbuf, &foldlen);                   \
+                if (UTF) {                                                    \
+                    len = UTF8SKIP(uc);                                       \
+                    uvc = to_utf8_fold( uc, foldbuf, &foldlen);               \
+                } else {                                                      \
+                    len = 1;                                                  \
+                    uvc = _to_fold_latin1((U32)*uc, foldbuf, &foldlen, 1);    \
+                }                                                             \
 		foldlen -= UNISKIP( uvc );                                    \
 		scan = foldbuf + UNISKIP( uvc );                              \
 	    }                                                                 \
@@ -3289,7 +3294,7 @@ Note that join_exact() assumes that the other types of EXACTFish nodes are not
 used in tries, so that would have to be updated if this changed
 
 */
-#define TRIE_TYPE_IS_SAFE ((UTF && optype == EXACTFU) || optype==EXACT)
+#define TRIE_TYPE_IS_SAFE (optype == EXACTFU || optype==EXACT)
 
                                 if ( last && TRIE_TYPE_IS_SAFE ) {
                                     make_trie( pRExC_state, 
