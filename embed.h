@@ -781,7 +781,7 @@
 #define warn_nocontext		Perl_warn_nocontext
 #define warner_nocontext	Perl_warner_nocontext
 #endif
-#if defined(PERL_IN_UTF8_C) || defined(PERL_IN_PP_C)
+#if defined(PERL_IN_REGCOMP_C) || defined(PERL_IN_PP_C)
 #define _is_utf8_quotemeta(a)	Perl__is_utf8_quotemeta(aTHX_ a)
 #endif
 #if defined(PERL_MAD)

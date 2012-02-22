@@ -6406,6 +6406,30 @@ S__new_invlist_C_array(pTHX_ UV* list)
     return invlist;
 }
 
+#ifndef PERL_IN_XSUB_RE
+bool
+Perl__is_utf8_quotemeta(pTHX_ const U8 *p)
+{
+    /* For exclusive use of pp_quotemeta() */
+
+    dVAR;
+
+    PERL_ARGS_ASSERT__IS_UTF8_QUOTEMETA;
+    if (! PL_utf8_quotemeta) {
+	PL_utf8_quotemeta = _core_swash_init("utf8", "",
+			    &PL_sv_undef,
+			    1, /* binary */
+			    0, /* not tr/// */
+			    FALSE, /* XXX fail if undefined */
+			    _new_invlist_C_array(_Perl_QuoteMeta_invlist),
+			    FALSE /* Not user-defined */
+			);
+    }
+    return swash_fetch(PL_utf8_quotemeta, p, TRUE /* is utf8 */)
+	   != 0;
+}
+#endif
+
 STATIC void
 S_invlist_extend(pTHX_ SV* const invlist, const UV new_max)
 {

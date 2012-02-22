@@ -23,9 +23,10 @@ my $out_fh = open_new('charclass_invlists.h', '>',
 
 print $out_fh "/* See the generating file for comments */\n\n";
 
-sub output_invlist ($$) {
+sub output_invlist ($$$) {
     my $name = shift;
     my $invlist = shift;     # Reference to inversion list array
+    my $read_only = shift;
 
     # Output the inversion list $invlist using the name $name for it.
     # It is output in the exact internal form for inversion lists.
@@ -47,7 +48,9 @@ sub output_invlist ($$) {
         $zero_or_one = 1;
     }
 
-    print $out_fh "\nUV ${name}_invlist[] = {\n";
+    print $out_fh "\n";
+    print $out_fh "STATIC " if $read_only;
+    print $out_fh "UV ${name}_invlist[] = {\n";
 
     print $out_fh "\t", scalar @$invlist, ",\t/* Number of elements */\n";
     print $out_fh "\t0,\t/* Current iteration position */\n";
@@ -68,8 +71,8 @@ sub output_invlist ($$) {
     print $out_fh "};\n";
 }
 
-output_invlist("Latin1", [ 0, 256 ]);
-output_invlist("AboveLatin1", [ 256 ]);
+output_invlist("Latin1", [ 0, 256 ], 0);
+output_invlist("AboveLatin1", [ 256 ], 0);
 
 # We construct lists for all the POSIX and backslash sequence character
 # classes in two forms:
@@ -122,8 +125,12 @@ for my $prop (qw(
                     L1PosixWord
                 PosixXDigit
                     XPosixXDigit
+                RO__Perl_QuoteMeta
     )
 ) {
+
+    my $property = $prop;
+    my $read_only = $property =~ s/^RO_//; 
 
     # For the Latin1 properties, we change to use the eXtended version of the
     # base property, then go through the result and get rid of everything not
@@ -133,11 +140,11 @@ for my $prop (qw(
     # artifically cutting that off at 256 because 256 is the first code point
     # above Latin1, we let the range go to its natural ending.  That gives us
     # extra information with no added space taken.
-    my $lookup_prop = $prop;
+    my $lookup_prop = $property;
     $lookup_prop =~ s/^L1Posix/XPosix/ or $lookup_prop =~ s/^L1//;
     my @invlist = prop_invlist($lookup_prop);
 
-    if ($lookup_prop ne $prop) {
+    if ($lookup_prop ne $property) {
         for my $i (0 .. @invlist - 1 - 1) {
             if ($invlist[$i] > 255) {
                 splice @invlist, $i+1;
@@ -146,7 +153,7 @@ for my $prop (qw(
         }
     }
 
-    output_invlist($prop, \@invlist);
+    output_invlist($property, \@invlist, $read_only);
 }
 
 read_only_bottom_close_and_rename($out_fh)

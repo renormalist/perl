@@ -6554,6 +6554,14 @@ STATIC I32	S_study_chunk(pTHX_ struct RExC_state_t *pRExC_state, regnode **scanp
 	assert(pRExC_state); assert(scanp); assert(minlenp); assert(deltap); assert(last)
 
 #endif
+#if defined(PERL_IN_REGCOMP_C) || defined(PERL_IN_PP_C)
+PERL_CALLCONV bool	Perl__is_utf8_quotemeta(pTHX_ const U8 *p)
+			__attribute__warn_unused_result__
+			__attribute__nonnull__(pTHX_1);
+#define PERL_ARGS_ASSERT__IS_UTF8_QUOTEMETA	\
+	assert(p)
+
+#endif
 #if defined(PERL_IN_REGCOMP_C) || defined(PERL_IN_REGEXEC_C) || defined(PERL_IN_UTF8_C)
 PERL_CALLCONV SV*	Perl__core_swash_init(pTHX_ const char* pkg, const char* name, SV* listsv, I32 minbits, I32 none, bool return_if_undef, SV* invlist, bool passed_in_invlist_has_user_defined_property)
 			__attribute__nonnull__(pTHX_1)
@@ -7154,12 +7162,6 @@ STATIC U8	S_to_lower_latin1(pTHX_ const U8 c, U8 *p, STRLEN *lenp)
 
 #endif
 #if defined(PERL_IN_UTF8_C) || defined(PERL_IN_PP_C)
-PERL_CALLCONV bool	Perl__is_utf8_quotemeta(pTHX_ const U8 *p)
-			__attribute__warn_unused_result__
-			__attribute__nonnull__(pTHX_1);
-#define PERL_ARGS_ASSERT__IS_UTF8_QUOTEMETA	\
-	assert(p)
-
 PERL_CALLCONV UV	Perl__to_upper_title_latin1(pTHX_ const U8 c, U8 *p, STRLEN *lenp, const char S_or_s)
 			__attribute__nonnull__(pTHX_2)
 			__attribute__nonnull__(pTHX_3);

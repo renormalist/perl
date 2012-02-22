@@ -6,7 +6,7 @@ no warnings 'surrogate';    # surrogates can be inputs to this
 use charnames ();
 use Unicode::Normalize qw(getCombinClass NFD);
 
-our $VERSION = '0.41';
+our $VERSION = '0.42';
 
 use Storable qw(dclone);
 
@@ -1949,8 +1949,9 @@ properties, and will return C<undef> if called with one of those.
 our %loose_defaults;
 our $MAX_UNICODE_CODEPOINT;
 
-sub prop_invlist ($) {
+sub prop_invlist ($;$) {
     my $prop = $_[0];
+    my $internal_ok = defined $_[1] && $_[1] eq 'perl_core_internal_ok';
     return if ! defined $prop;
 
     require "utf8_heavy.pl";
@@ -1967,7 +1968,7 @@ sub prop_invlist ($) {
               || ref $swash eq ""
               || $swash->{'BITS'} != 1
               || $swash->{'USER_DEFINED'}
-              || $prop =~ /^\s*_/;
+              || (! $internal_ok && $prop =~ /^\s*_/);
 
     if ($swash->{'EXTRAS'}) {
         carp __PACKAGE__, "::prop_invlist: swash returned for $prop unexpectedly has EXTRAS magic";
